@@ -15,8 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.coffeeapp.R
-import com.example.coffeeapp.ui.theme.LightBrown
+import com.example.cafecoffeeapp.R
+import com.example.cafecoffeeapp.ui.theme.LightBrown
 
 
 @Preview(showBackground = true)
