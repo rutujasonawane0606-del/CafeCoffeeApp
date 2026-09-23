@@ -1,4 +1,4 @@
-package com.example.cafecoffeeapp.screens.welcomescreen
+package com.example.cafecoffeeapp.presentation.screens.welcomescreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

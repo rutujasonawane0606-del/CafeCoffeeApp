@@ -1,4 +1,4 @@
-package com.example.cafecoffeeapp.screens
+package com.example.cafecoffeeapp.presentation.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,7 +33,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.Alignment
-import com.example.cafecoffeeapp.model.Product
+import com.example.cafecoffeeapp.R
+import com.example.cafecoffeeapp.domain.model.Product
 
 @Composable
 fun ProductCard(
@@ -68,6 +69,29 @@ fun ProductCard(
                         .fillMaxSize()
                         .clip(RoundedCornerShape(24.dp))
                 )
+
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .background(
+                            color = Color.LightGray.copy(alpha = 0.7f),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+
+                )
+                {
+
+                    Icon(
+                        painter = painterResource(R.drawable.regular_outline_heart),
+                        contentDescription = "Add to favourite",
+                        tint = LightBrown,
+                        modifier = Modifier.size(24.dp)
+                    )
+
+                }
+
             }
 
             Spacer(modifier = Modifier.height(8.dp))

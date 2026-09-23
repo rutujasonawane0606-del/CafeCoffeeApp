@@ -1,4 +1,4 @@
-package com.example.cafecoffeeapp.screens.homescreen
+package com.example.cafecoffeeapp.presentation.screens.homescreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row

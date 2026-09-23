@@ -1,4 +1,4 @@
-package com.example.cafecoffeeapp.screens.homescreen
+package com.example.cafecoffeeapp.presentation.screens.homescreen
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,18 +8,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.cafecoffeeapp.model.Product
-import com.example.cafecoffeeapp.screens.ProductCard
+import com.example.cafecoffeeapp.domain.model.Product
+import com.example.cafecoffeeapp.presentation.screens.ProductCard
 import androidx.compose.foundation.lazy.items
 @Composable
 fun ProductsGrid(
-    products: List<Product>
+    products: List<Product>,
+    topContent: @Composable () ->Unit
+
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
+        item {
+            topContent()
+        }
+
         items(products.chunked(2)) { rowItems ->
 
             Row(
