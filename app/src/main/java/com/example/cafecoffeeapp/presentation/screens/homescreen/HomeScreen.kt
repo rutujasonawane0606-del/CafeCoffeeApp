@@ -11,46 +11,49 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cafecoffeeapp.R
-import com.example.cafecoffeeapp.domain.model.Product
-import com.example.cafecoffeeapp.presentation.screens.ui_components.MyBottomNavBar
+import com.example.cafecoffeeapp.presentation.viewmodel.CoffeeViewModel
 
-@Preview(showBackground = true)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    viewModel: CoffeeViewModel
+) {
+    val location = "Bibwewadi, Pune"
+    val products by viewModel.filteredProducts.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val promoBanner by viewModel.promoBanner.collectAsState()
 
-    val location = " Bibwewadi,Pune"
-    Scaffold(
-        bottomBar = {
-            MyBottomNavBar()
-        }
-    ) { innerPadding ->
-
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Dark gradient top header background
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(1f / 3f)
+                .fillMaxHeight(0.32f)
                 .background(
-                    brush = Brush.linearGradient(
+                    brush = Brush.verticalGradient(
                         colors = listOf(
-                            Color(0xFF303030),
-                            Color(0xFF1F1F1F),
-                            Color(0xFF121212)
+                            Color(0xFF1E1E1E),
+                            Color(0xFF2C2C2C),
+                            Color(0xFF383838)
                         )
                     )
                 )
@@ -59,103 +62,87 @@ fun HomeScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
-                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
         ) {
+            // FIXED HEADER (Does NOT move/scroll)
+            Spacer(modifier = Modifier.height(20.dp))
 
-            //display products
-
-            val products = listOf(
-                Product(
-                    id = 1,
-                    name = "Espresso",
-                    description = "Strong and rich",
-                    price = 380.0,
-                    imageRes = R.drawable.coffee_1
-                ),
-                Product(
-                    id = 2,
-                    name = "Latte",
-                    description = "Smooth and creamy",
-                    price = 450.0,
-                    imageRes = R.drawable.coffee_2
-                ),
-                Product(
-                    id = 3,
-                    name = "Cappuccino",
-                    description = "With chocolate",
-                    price = 420.0,
-                    imageRes = R.drawable.coffee_3
-                ),
-                Product(
-                    id = 4,
-                    name = "Mocha",
-                    description = "With cocoa flavor",
-                    price = 470.0,
-                    imageRes = R.drawable.coffee_4
-                ),
-                Product(
-                    id = 5,
-                    name = "Macchiato",
-                    description = "Bold and milky",
-                    price = 460.0,
-                    imageRes = R.drawable.coffee_5
-                ),
-                Product(
-                    id = 6,
-                    name = "Flat White",
-                    description = "Velvety smooth",
-                    price = 440.0,
-                    imageRes = R.drawable.coffee_6
-                ),
-                Product(
-                    id = 7,
-                    name = "Iced Mocha",
-                    description = "Refreshing and rich",
-                    price = 470.0,
-                    imageRes = R.drawable.coffee_4
-                )
+            Text(
+                text = "Location",
+                color = Color.LightGray,
+                fontSize = 12.sp
             )
 
-            ProductsGrid(products = products) {
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Location",
-                    color = Color.Gray,
-                    fontSize = 16.sp
+                    text = location,
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 15.sp
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        location, color = Color.White, fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp
-                    )
-
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Change location",
-                        tint = Color.White
-                    )
-
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-
-                MySearchBar()
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Image(
-
-                    painter = painterResource(R.drawable.banner_1),
-                    contentDescription = "banner"
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = "Change location",
+                    tint = Color.White
                 )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                HomeScreenCategories()
-
             }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Fixed Search Bar
+            MySearchBar(
+                query = searchQuery,
+                onQueryChange = { query ->
+                    viewModel.onSearchQueryChange(query)
+                }
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // DYNAMIC PROMO BANNER (Synced from Firebase Firestore, permanently pinned!)
+            PromoBannerView(
+                banner = promoBanner,
+                onBannerClick = { banner ->
+                    if (banner.promoCode.isNotBlank()) {
+                        // User clicked banner
+                    }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Fixed Category Chips
+            HomeScreenCategories(
+                categories = viewModel.categories,
+                selectedCategory = selectedCategory,
+                onCategorySelected = { category ->
+                    viewModel.onCategorySelected(category)
+                }
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // SCROLLABLE PRODUCTS (Only products scroll underneath the banner!)
+            ProductsGrid(
+                products = products,
+                modifier = Modifier.weight(1f),
+                onProductClick = { product ->
+                    viewModel.onProductSelected(product)
+                },
+                onAddToCart = { product ->
+                    viewModel.addToCart(product)
+                },
+                onToggleFavorite = { product ->
+                    viewModel.toggleFavorite(product)
+                },
+                onResetFilter = {
+                    viewModel.onSearchQueryChange("")
+                    viewModel.onCategorySelected("All Coffees")
+                }
+            )
         }
     }
 }
